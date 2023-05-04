@@ -22,6 +22,6 @@ app.post('/courses', async (req, res) => {
     const courses = req.body
     await client.set("courses", JSON.stringify(courses))
 })
-app.listen( port, () => {
-    console.log( `server started at http://localhost:${ port }` );
+app.listen( PORT, () => {
+    console.log( `server started at http://localhost:${ PORT }` );
 })
