@@ -23,23 +23,6 @@ app.get("/", (req, res) => {
 app.get( "/courses", async ( req, res ) => {
     const courses = await client.get("courses") ?? "[]"
     res.json(JSON.parse(courses));
-    await client.set("users", JSON.stringify([
-        {
-            username: "jsmith69",
-            password: "12345",
-            account: "student"
-        },
-        {
-            username: "bdole88",
-            password: "f4nny",
-            account: "teacher"
-        },
-        {
-            username: "hli16",
-            password: "lewisM@S",
-            account: "teacher"
-        }
-    ]))
 })
 
 
@@ -47,26 +30,9 @@ app.post('/courses', async (req, res) => {
     const courses = req.body
     console.log("POST")
     console.log(courses)
-    // await client.set("courses", JSON.stringify(courses))
-    await client.set("users", JSON.stringify([
-        {
-            username: "jsmith69",
-            password: "12345",
-            account: "student"
-        },
-        {
-            username: "bdole88",
-            password: "f4nny",
-            account: "teacher"
-        },
-        {
-            username: "hli16",
-            password: "lewisM@S",
-            account: "teacher"
-        }
-    ]))
-
+    await client.set("courses", JSON.stringify(courses))
 })
+
 app.listen( PORT, () => {
     console.log( `server started at http://localhost:${ PORT }` );
 })
