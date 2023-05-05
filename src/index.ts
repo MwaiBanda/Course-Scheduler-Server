@@ -16,6 +16,23 @@ app.get("/", (req, res) => {
 app.get( "/courses", async ( req, res ) => {
     const courses = await client.get("courses") ?? "[]"
     res.json(JSON.parse(courses));
+    await client.set("users", JSON.stringify([
+        {
+            username: "jsmith69",
+            password: "12345",
+            account: "student"
+        },
+        {
+            username: "bdole88",
+            password: "f4nny",
+            account: "teacher"
+        },
+        {
+            username: "hli16",
+            password: "lewisM@S",
+            account: "teacher"
+        }
+    ]))
 })
 
 
