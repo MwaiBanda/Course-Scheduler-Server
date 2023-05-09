@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const users = await client.get("users")
-    res.json(JSON.parse(users)).sendStatus(200);
+    res.json(JSON.parse(users)).status(200);
   } catch (error) {
     console.log(error)
   }
@@ -37,7 +37,7 @@ app.post('/users', async (req, res) => {
       return course.name
     })}`)
     await client.set("users", JSON.stringify(users))
-    res.json(users).sendStatus(200)
+    res.json(users).status(200)
   } catch (error) {
     console.log(error)
   }
@@ -46,7 +46,7 @@ app.post('/users', async (req, res) => {
 app.get("/courses", async (req, res) => {
   try {
     const courses = await client.get("courses")
-    res.json(JSON.parse(courses)).sendStatus(200);
+    res.json(JSON.parse(courses)).status(200);
   } catch (error) {
     console.log(error)
   }
@@ -56,7 +56,7 @@ app.get("/courses/user/:Id", async (req, res) => {
   try {
     const user = req.params.Id
     const courses = await client.get(user)
-    return res.json(JSON.parse(courses) as any[]).sendStatus(200);
+    return res.json(JSON.parse(courses) as any[]).status(200);
   } catch (error) {
     console.log(error)
   }
@@ -69,7 +69,7 @@ app.post('/courses', async (req, res) => {
       return course.name
     })}`)
     await client.set("courses", JSON.stringify(courses))
-    res.json(courses).sendStatus(200)
+    res.json(courses).status(200)
   } catch (error) {
     console.log(error)
   }
@@ -80,7 +80,7 @@ app.post("/courses/user/:Id", async (req, res) => {
     const user = req.params.Id
     const courses = req.body as any[]
     await client.set(user, JSON.stringify(courses))
-    res.json(courses).sendStatus(200)
+    res.json(courses).status(200)
   } catch (error) {
     console.log(error)
   }
