@@ -58,8 +58,10 @@ app.get("/courses/user/:Id", async (req, res) => {
   try {
     const user = req.params.Id
     const courses = await client.get(user)
-    const response = JSON.parse(courses) as any[]
-    return res.json(response ? response : []).status(200);
+    if (courses) {
+      const response = JSON.parse(courses) as any[]
+      return res.json(response ? response : []).status(200);
+    }
   } catch (error) {
     console.log(error)
   }
