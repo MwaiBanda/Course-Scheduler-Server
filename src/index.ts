@@ -23,7 +23,8 @@ app.get("/", (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const users = await client.get("users")
-    res.json(JSON.parse(users)).status(200);
+    const response = JSON.parse(users) as any[]
+    res.json(response ? response : []).status(200);
   } catch (error) {
     console.log(error)
   }
@@ -46,7 +47,8 @@ app.post('/users', async (req, res) => {
 app.get("/courses", async (req, res) => {
   try {
     const courses = await client.get("courses")
-    res.json(JSON.parse(courses)).status(200);
+    const response = JSON.parse(courses) as any[]
+    res.json(response ? response : []).status(200);
   } catch (error) {
     console.log(error)
   }
@@ -56,7 +58,8 @@ app.get("/courses/user/:Id", async (req, res) => {
   try {
     const user = req.params.Id
     const courses = await client.get(user)
-    return res.json(JSON.parse(courses) as any[]).status(200);
+    const response = JSON.parse(courses) as any[]
+    return res.json(response ? response : []).status(200);
   } catch (error) {
     console.log(error)
   }
