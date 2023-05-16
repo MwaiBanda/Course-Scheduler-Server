@@ -94,21 +94,32 @@ app.post("/courses/user/:Id", async (req, res) => {
   }
 })
 
-app.get("/students-enrolled/course/:Id", async (req, res) => {
+app.get("/info/course/:Id", async (req, res) => {
   try {
     const courseId = req.params.Id
     const users = JSON.parse(await client.get('users')) as User[]
+    let foundCourse: Course = null
     let enrolledCount = 0
     if (users) {
       console.log(courseId)
       for (const user of users) {
         const userCourses = JSON.parse(await client.get(user.username)) as Course[];
         if (userCourses) {
-          enrolledCount += userCourses.filter(course => course.id === JSON.parse(courseId)).length;
+          const enrolledCourses = userCourses.filter(course => course.id === JSON.parse(courseId))
+          enrolledCount += enrolledCourses.length;
+          if (enrolledCourses.length > 0) {
+            foundCourse = { ...userCourses.find(course => course.id === JSON.parse(courseId)),  ...{ numberOfEnrolledStudents: enrolledCount }}
+          }
           console.log(`Students enrolled in Course: ${courseId} are : ${enrolledCount}`);
         }
       }
-      return res.json({ numberOfEnrolledStudents: enrolledCount }).status(200);
+      return res.json({
+        ...(foundCourse ? foundCourse : { 
+            id: JSON.parse(courseId) as number,
+            numberOfEnrolledStudents: enrolledCount,
+            error: "Not information found (No Students Enrolled)" 
+          }),
+      }).status(200);
     }
   } catch (error) {
     console.log(error)
