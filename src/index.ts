@@ -1,4 +1,4 @@
-import { Redis } from "ioredis";
+import { Redis, RedisKey } from "ioredis";
 import express from "express";
 import cors from "cors"
 import REDIS_URL from "./config/default";
@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 app.get("/users", async (req, res) => {
   try {
     const users = await client.get("users")
-    const response = JSON.parse(users) as any[]
+    const response = JSON.parse(users) as User[]
     res.json(response ? response : []).status(200);
   } catch (error) {
     console.log(error)
@@ -35,9 +35,9 @@ app.get("/users", async (req, res) => {
 
 app.post('/users', async (req, res) => {
   try {
-    const users = req.body as any[]
+    const users = req.body as Course[]
     console.log("[POST]\n" + `${users.map((course) => {
-      return course.name
+      return course.courseName
     })}`)
     await client.set("users", JSON.stringify(users))
     res.json(users).status(200)
@@ -49,7 +49,7 @@ app.post('/users', async (req, res) => {
 app.get("/courses", async (req, res) => {
   try {
     const courses = await client.get("courses")
-    const response = JSON.parse(courses) as any[]
+    const response = JSON.parse(courses) as Course[]
     res.json(response ? response : []).status(200);
   } catch (error) {
     console.log(error)
@@ -61,7 +61,7 @@ app.get("/courses/user/:Id", async (req, res) => {
     const user = req.params.Id
     const courses = await client.get(user)
     if (courses) {
-      const response = JSON.parse(courses) as any[]
+      const response = JSON.parse(courses) as Course[]
       return res.json(response ? response : []).status(200);
     }
   } catch (error) {
@@ -69,11 +69,12 @@ app.get("/courses/user/:Id", async (req, res) => {
   }
 })
 
+
 app.post('/courses', async (req, res) => {
   try {
-    const courses = req.body as any[]
+    const courses = req.body as Course[]
     console.log("[POST]\n" + `${courses.map((course) => {
-      return course.name
+      return course.courseName
     })}`)
     await client.set("courses", JSON.stringify(courses))
     res.json(courses).status(200)
@@ -85,9 +86,30 @@ app.post('/courses', async (req, res) => {
 app.post("/courses/user/:Id", async (req, res) => {
   try {
     const user = req.params.Id
-    const courses = req.body as any[]
+    const courses = req.body as Course[]
     await client.set(user, JSON.stringify(courses))
     res.json(courses).status(200)
+  } catch (error) {
+    console.log(error)
+  }
+})
+
+app.get("/students-enrolled/course/:Id", async (req, res) => {
+  try {
+    const courseId = req.params.Id
+    const users = JSON.parse(await client.get('users')) as User[]
+    let enrolledCount = 0
+    if (users) {
+      console.log(courseId)
+      for (const user of users) {
+        const userCourses = JSON.parse(await client.get(user.username)) as Course[];
+        if (userCourses) {
+          enrolledCount += userCourses.filter(course => course.id === JSON.parse(courseId)).length;
+          console.log(`Students enrolled in Course: ${courseId} are : ${enrolledCount}`);
+        }
+      }
+      return res.json({ numberOfEnrolledStudents: enrolledCount }).status(200);
+    }
   } catch (error) {
     console.log(error)
   }
@@ -96,3 +118,6 @@ app.post("/courses/user/:Id", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`);
 })
+
+
+
