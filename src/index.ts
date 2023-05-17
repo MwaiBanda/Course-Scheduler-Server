@@ -117,7 +117,7 @@ app.get("/info/course/:Id", async (req, res) => {
         ...(foundCourse ? foundCourse : { 
             id: JSON.parse(courseId) as number,
             numberOfEnrolledStudents: enrolledCount,
-            error: "Not information found (No Students Enrolled)" 
+            message: "Not information found (No Students Enrolled)" 
           }),
       }).status(200);
     }
